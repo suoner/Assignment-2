@@ -4,29 +4,27 @@ from regression import (logreg, utils)
 from sklearn.preprocessing import StandardScaler
 
 def main():
-
-    # load data with default settings
+    # Load data with default settings
     X_train, X_val, y_train, y_val = utils.loadDataset(features=['Penicillin V Potassium 500 MG', 'Computed tomography of chest and abdomen', 
                                                                   'Plain chest X-ray (procedure)',  'Low Density Lipoprotein Cholesterol',
                                                                   'Creatinine', 'AGE_DIAGNOSIS'], split_percent=0.8, split_state=42)
 
-    # scale data since values vary across features
+    # Scale data since values vary across features
     sc = StandardScaler()
     X_train = sc.fit_transform(X_train)
-    X_val = sc.transform (X_val)
-    
-    #print(X_train.shape, X_val.shape, y_val.shape, y_train.shape)
+    X_val = sc.transform(X_val)
 
-
-    """
-    # for testing purposes once you've added your code
-    # CAUTION & HINT: hyperparameters have not been optimized
-
-    log_model = logreg.LogisticRegression(num_feats=2, max_iter=10, tol=0.01, learning_rate=0.00001, batch_size=12)
+    # Initialize logistic regression model
+    log_model = logreg.LogisticRegression(num_feats=X_train.shape[1], max_iter=10, tol=0.01, learning_rate=0.00001, batch_size=12)
     log_model.train_model(X_train, y_train, X_val, y_val)
+    
+    # Plot loss history to visualize training progress
     log_model.plot_loss_history()
-            
-    """
+    
+    # Evaluate on validation set
+    y_pred = log_model.make_prediction(X_val)
+    accuracy = np.mean(y_pred == y_val)
+    print("Validation Accuracy:", accuracy)
 
 if __name__ == "__main__":
     main()

@@ -138,11 +138,6 @@ class LogisticRegression(BaseRegressor):
         
     def calculate_gradient(self, X, y) -> np.ndarray:
         """
-        TODO: Write function to calculate gradient of the
-        logistic loss function to update the weights 
-        
-        Refer to Workshop 2 and 3 for some clues on how to start!
-
         Params:
             X (np.ndarray): feature values
             y (np.array): labels corresponding to X
@@ -150,17 +145,20 @@ class LogisticRegression(BaseRegressor):
         Returns: 
             gradients for a given loss function type np.ndarray (n-dimensional array)
         """
+        # compute predictions using sigmoid function
+        linear_model = np.dot(X, self.W)
+        y_pred = 1 / (1 + np.exp(-linear_model))
         
+        # Compute the error
+        error = y_pred - y
         
-        pass
+        # Compute gradient
+        gradient = np.dot(X.T, error) / X.shape[0]
+        
+        return gradient
     
     def loss_function(self, X, y) -> float:
         """
-        TODO: Get y_pred from input X and implement binary cross 
-        entropy loss function. Binary cross entropy loss assumes that 
-        the classification is either 1 or 0, not continuous, making
-        it more suited for (binary) classification.    
-
         Params:
             X (np.ndarray): feature values
             y (np.array): labels corresponding to X
@@ -168,7 +166,13 @@ class LogisticRegression(BaseRegressor):
         Returns: 
             average loss 
         """
-        pass
+        linear_model = np.dot(X, self.W)
+        y_pred = 1 / (1 + np.exp(-linear_model))
+        
+        # Binary cross Entropy loss
+        loss = -np.mean(y * np.log(y_pred + 1e-15) + (1 - y) * np.log(1 - y_pred + 1e-15))
+        
+        return loss
     
     def make_prediction(self, X) -> np.array:
         """
@@ -182,9 +186,8 @@ class LogisticRegression(BaseRegressor):
         Returns: 
             y_pred for given X
         """
-
-        pass
-
-
-
-    
+        # apply the sigmoid function to get probabilities
+        linear_model = np.dot(X, self.W)
+        y_pred = 1 / (1 + np.exp(-linear_model))
+        # Convert probabilities to binary output (0 or 1)
+        return np.where(y_pred >= 0.5, 1, 0)
